@@ -14,16 +14,17 @@
     <h1> Adicionar o produto malandro</h1>
     <form method="POST"  class="container mt-5" enctype="multipart/form-data">{% csrf_token %}
         <input type="text" name="name" placeholder="Nome">
-        <select name="category" id="">
-            {% for category in categories %}
-            <option value="{{category.id}}">{{ category.name }}</option>
+        <!-- <select name="genery" id="">
+            {% for genery in generies %}
+            <option value="{{genery.id}}">{{ genery.name }}</option>
             {% endfor%}
-        </select>
+        </select> -->
+        <input type="text" name="genery" placeholder="genero">
+        <input type="text" name="pg" placeholder="Paginas">
         <input type="file" name="picture" placeholder="Imagem">
-        <input type="text" name="price" placeholder="Preço">
-        <input type="text" name="description" placeholder="Descrição">
+        <input type="text" name="author" placeholder="Autor">
         <input type="text" name="qtd" placeholder="Quantidade">
-        <input type="text" name="discount" placeholder="Desconto">
+        <input type="text" name="name_sacado" placeholder="Nome Sacado">
         <button type="submit">Salvar</button>
     </form>
 </body>

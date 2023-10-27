@@ -1,6 +1,6 @@
 from django.contrib import admin
 from.models import Livro
-from.models import Generos
+# from.models import Genero
 
 class LivrosAdmin(admin.ModelAdmin):
     list_display=['name', 'author','qtd'] 
@@ -9,7 +9,7 @@ class LivrosAdmin(admin.ModelAdmin):
 
   
 admin.site.register(Livro, LivrosAdmin)
-admin.site.register(Generos)
+# admin.site.register(Genero)
 
 # Register your models here.
 

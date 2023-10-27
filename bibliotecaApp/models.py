@@ -1,21 +1,22 @@
 from django.db import models
 
-class Generos(models.Model):
-    name = models.CharField(max_length=255)
+# class Genero(models.Model):
+#     name = models.CharField(max_length=255)
 
-    def __str__(self) -> str:
-        return self.name
+#     def __str__(self) -> str:
+#         return self.name
     
-    class Meta:
-        verbose_name = 'Genero'
-        verbose_name_plural = 'Generos'
+#     class Meta:
+#         verbose_name = 'Genero'
+#         verbose_name_plural = 'Generos'
 
 class Livro(models.Model):
 
    
     cod = models.IntegerField(unique=True)
     name = models.CharField(max_length=255)
-    genery = models.ForeignKey(Generos, on_delete=models.CASCADE, blank=True)
+    # genery = models.ForeignKey(Genero, on_delete=models.CASCADE, blank=False)
+    genery = models.CharField(max_length=255)
     pg = models.IntegerField()
     picture = models.ImageField(blank=False)
     author = models.CharField(max_length=255)

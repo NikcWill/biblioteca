@@ -13,32 +13,30 @@
 <body>
     <header>
         <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" href="#">StoqueADS</a>
+            <a class="navbar-brand" href="#">BibliotecaApp</a>
         </nav>
     </header>
 
-    <a href="{% url 'add-product' %}" class=" btn btn-primary mt-5 mb-1"> adicionar produto</a>
+    <a href="{% url 'add-livro' %}" class=" btn btn-primary mt-5 mb-1"> adicionar produto</a>
 
     <table class="table table-dark m-5">
         <thead>
           <tr>
             <th scope="col">cod</th>
             <th scope="col">Nome</th>
-            <th scope="col">Preço</th>
+            <th scope="col">author</th>
             
           </tr>
         </thead>
         <tbody>
           <tr>
-            {% for produto in produtos %}
-            <td scope="row">{{ produto.cod}}</td>
+            {% for livro in livros %}
+            <td scope="row">{{ livro.cod}}</td>
             <td>
-              <a href="{% url 'product-detail' produto.id %}">
-                {{ produto.name}}
+              <a href="{% url 'livro-detail' livro.id %}">
+                {{ livro.name}}
               </a></td>
-            <td>{{ produto.price}}</td>
-            <td>{{ produto.qtd}}</td>
-            
+            <td>{{ livro.author }}</td> 
           </tr>
           {% endfor %}
         

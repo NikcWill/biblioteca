@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from.models import Livro, Generos
+from.models import Livro
 from random import randint
 from datetime import datetime
  
@@ -37,12 +37,12 @@ def add_livro(request, ):
     
 
     Livro.objects.create(
-      cod=cod, name=name, genery_id=genery, pg=pg, picture=picture,
+      cod=cod, name=name, genery=genery, pg=pg, picture=picture,
       author=author, qtd=qtd, name_sacado=name_sacado,
       created_at=created_at
     )
     return redirect('home')
 
   else:
-    generos = Generos.objects.all()
-    return render(request, 'pages/add-livro.html',{'generos':generos})
+    # genero = Genero.objects.all()
+    return render(request, 'pages/add-livro.html')

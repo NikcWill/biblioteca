@@ -11,11 +11,11 @@
     <title>Document</title>
 </head>
 <body>
-    <H1>{{ product.name }}</H1>
-    <h2>{{ product.price }}</h2>
-    <h2>{{ product.category }}</h2>
-    <a href="{% url 'delete-product' product.id %}" class="btn btn-danger">Excluir Produto </a>
-    <img id="imagem" src="{{ product.picture.url }}" alt="">
+    <H1>{{ livro.name }}</H1>
+    <h2>{{ livro.price }}</h2>
+    <h2>{{ livro.genery }}</h2>
+    <a href="{% url 'delete-livro' livro.id %}" class="btn btn-danger">Excluir Produto </a>
+    <img id="imagem" src="{{ livro.picture.url }}" alt="">
 
 </body>
 </html>
