@@ -61,8 +61,10 @@ def livro_detail(request, id):
 @login_required(redirect_field_name='login')
 def delete_livro(request, id):
   livro = Livro.objects.get(id=id)
-  livro.delete()
-  return redirect('home')
+  if livro.emprestado<=0:
+    livro.delete()
+    return redirect('home')
+  return redirect('livro-detail', id=id)
 
 @login_required(redirect_field_name='login')
 def add_livro(request, ):
