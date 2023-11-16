@@ -11,21 +11,22 @@
     <title>Document</title>
 </head>
 <body>
-    <h1> Adicionar o produto malandro</h1>
+    <h1> Adicionar o livro malandro</h1>
     <form method="POST"  class="container mt-5" enctype="multipart/form-data">{% csrf_token %}
         <input type="text" name="name" placeholder="Nome">
-        <!-- <select name="genery" id="">
-            {% for genery in generies %}
-            <option value="{{genery.id}}">{{ genery.name }}</option>
+        <select name="genery" id="">
+            {% for genero in generos %}
+            <option value="{{genero.id}}">{{ genero.name }}</option>
             {% endfor%}
-        </select> -->
-        <input type="text" name="genery" placeholder="genero">
+        </select>
         <input type="text" name="pg" placeholder="Paginas">
         <input type="file" name="picture" placeholder="Imagem">
         <input type="text" name="author" placeholder="Autor">
         <input type="text" name="qtd" placeholder="Quantidade">
         <input type="text" name="name_sacado" placeholder="Nome Sacado">
+        
         <button type="submit">Salvar</button>
     </form>
+    <a href="{% url 'home' %}" class=" btn btn-primary mt-5 mb-1"> home</a>
 </body>
 </html>

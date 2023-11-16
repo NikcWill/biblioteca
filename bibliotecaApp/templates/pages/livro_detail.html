@@ -11,11 +11,21 @@
     <title>Document</title>
 </head>
 <body>
-    <H1>{{ livro.name }}</H1>
-    <h2>{{ livro.price }}</h2>
-    <h2>{{ livro.genery }}</h2>
+    <H1>Nome do livro: {{ livro.name }}</H1>
+    <h2>Quantidade: {{ livro.qtd }}</h2>
+    <h2>Genero: {{ livro.genery }}</h2>
+    <h2>Autor: {{ livro.author }}</h2>
+    <h2>Qtd emprestado: {{ livro.emprestado }}</h2>
+
     <a href="{% url 'delete-livro' livro.id %}" class="btn btn-danger">Excluir Produto </a>
-    <img id="imagem" src="{{ livro.picture.url }}" alt="">
+    <a href="{% url 'emprestar-livro' livro.id %}" class="btn btn-secondary">Emprestar Livro </a>
+    <a href="{% url 'devolver-livro' livro.id %}" class="btn btn-secondary">Devolver Livro </a>
+    <a href="{% url 'home'  %}" class="btn btn-secondary">Voltar a home </a>
+    {% if livro.picture %}
+        <img id="imagem" src="{{ livro.picture.url }}" alt="">
+    {% else %}  
+        <p>No picture available</p>
+    {% endif %}
 
 </body>
 </html>

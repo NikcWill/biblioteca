@@ -1,0 +1,63 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="#">BibliotecaApp</a>
+            <form action="{% url 'search-livros-emprestados' %}" class="d-flex gap-1">
+              <input type="search" name="q">
+              <button class="btn btn-success">Buscar</button>
+            </form>
+        </nav>
+    </header>
+
+    <a href="{% url 'home'  %}" class=" btn btn-primary mt-5 mb-1">Voltar a home </a>
+    <table class="table table-dark m-5">
+        <thead>
+            <tr>
+                <th scope="col">Selecionar</th>
+                <th scope="col">Cod</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Autor</th>
+                <th scope="col">Qtd</th>
+                <th scope="col">Sacado</th>
+                <th scope="col">Qtd emp</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for livro in livros %}
+            <tr>
+                <td>
+                    <a href="{% url 'devolver-livro' livro.id %}">
+                        Devolver
+                    </a>
+                </td>
+                <td scope="row">{{ livro.cod }}</td>
+                <td>
+                    <a href="{% url 'livro-detail' livro.id %}">
+                        {{ livro.name }}
+                    </a>
+                </td>
+                <td>{{ livro.author }}</td>
+                <td>{{ livro.qtd }}</td>
+                <td>{{ livro.name_sacado }}</td>
+                <td>{{ livro.emprestado }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+</body>
+</html>
