@@ -1,4 +1,6 @@
 from django.db import models
+from empresa.models import Empresas
+from accounts.models import CustomUser
 
 class Genero(models.Model):
     name = models.CharField(max_length=255)
@@ -11,6 +13,9 @@ class Genero(models.Model):
         verbose_name_plural = 'Gêneros'
 
 class Livro(models.Model):
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    empresa = models.ForeignKey(Empresas, on_delete=models.CASCADE)
     cod = models.IntegerField(unique=True)
     name = models.CharField(max_length=255, blank=False)
     genery = models.ForeignKey(Genero, on_delete=models.CASCADE, blank=True)

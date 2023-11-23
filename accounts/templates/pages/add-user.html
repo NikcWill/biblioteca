@@ -16,14 +16,16 @@
         <input type="text" name="name" placeholder="Nome"><br>
         <input type="text" name="usuario" placeholder="Usuário"><br>
         <select name="empresa" id="">
+            <option value="">Selecione um Empresa</option>
             {% for empresa in empresas %}
             <option value="{{empresa.id}}">{{ empresa.name }}</option>
             {% endfor%}
         </select>
         <select name="cargo" id="">
+            <option value="">Selecione um cargo</option>
             {% for cargo in cargos %}
-            <option value="{{cargo.id}}">{{ cargo.name }}</option>
-            {% endfor%}
+            <option value="{{ cargo.id }}">{{ cargo.name }}</option>
+            {% endfor %}
         </select>
         <input type="text" name="email" placeholder="Email"><br>
         <input type="text" name="senha" placeholder="Senha"><br>

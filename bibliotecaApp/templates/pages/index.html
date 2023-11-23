@@ -26,7 +26,13 @@
             <a href="{% url 'add-user' %}" class=" btn btn-primary "> registrarse</a>
         </nav>
     </header>
-
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <a href="{% url 'add-livro' %}" class=" btn btn-primary mt-5 mb-1"> adicionar produto</a>
     <a href="{% url 'livros-emprestados' %}" class=" btn btn-primary mt-5 mb-1"> Livros emprestados</a>
 
@@ -38,6 +44,7 @@
             <th scope="col">Autor</th>
             <th scope="col">Qtd</th>
             <th scope="col">Qtd emprestado</th>
+            <th scope="col">User</th>
             
           </tr>
         </thead>
@@ -52,6 +59,7 @@
             <td>{{ livro.author }}</td> 
             <td>{{ livro.qtd }}</td> 
             <td>{{ livro.emprestado }}</td> 
+            <td>{{ livro.user }}</td> 
           </tr>
           {% endfor %}
         

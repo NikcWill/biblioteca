@@ -2,6 +2,7 @@ from django.contrib import admin
 from.models import Livro
 from.models import Genero
 from empresa.models import Empresas
+from accounts.models import Cargos, CustomUser
 # from.models import Genero
 
 class LivrosAdmin(admin.ModelAdmin):
@@ -17,7 +18,9 @@ class EmpresasAdmin(admin.ModelAdmin):
   
 admin.site.register(Livro, LivrosAdmin)
 admin.site.register(Genero)
-admin.site.register(Empresas)
+admin.site.register(Empresas, EmpresasAdmin)
+admin.site.register(Cargos)
+admin.site.register(CustomUser)
 
 # Register your models here.
 

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from empresa.models import Empresas  # Importe o modelo de Empresas da sua aplicação de empresas
+from empresa.models import Empresas  
 
 class Cargos(models.Model):
     name = models.CharField(max_length=255)
@@ -10,7 +10,7 @@ class Cargos(models.Model):
     
     class Meta:
         verbose_name = 'Cargo'
-        verbose_name_plural = 'Caragos'
+        verbose_name_plural = 'Cargos'
 
 class CustomUser(AbstractUser):
     cargo = models.ForeignKey(Cargos, on_delete=models.SET_NULL, null=True, blank=True)
