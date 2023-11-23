@@ -11,23 +11,12 @@
     <title>Document</title>
 </head>
 <body>
-    <h1> Adicionar o malandro</h1>
+    <h1> Adicionar a empresas</h1>
     <form method="POST"  class="container mt-5" enctype="multipart/form-data">{% csrf_token %}
         <input type="text" name="name" placeholder="Nome"><br>
-        <input type="text" name="usuario" placeholder="Usuário"><br>
-        <select name="empresa" id="">
-            {% for empresa in empresas %}
-            <option value="{{empresa.id}}">{{ empresa.name }}</option>
-            {% endfor%}
-        </select>
-        <select name="cargo" id="">
-            {% for cargo in cargos %}
-            <option value="{{cargo.id}}">{{ cargo.name }}</option>
-            {% endfor%}
-        </select>
-        <input type="text" name="email" placeholder="Email"><br>
-        <input type="text" name="senha" placeholder="Senha"><br>
-        <input type="text" name="senha-repete" placeholder="Repita sua senha"><br>
+        <input type="text" name="cnpj" placeholder="cnpj"><br>
+        <input type="checkbox" id="active" name="active">
+        <label for="active">Ativar/Desativar</label><br>
         <button type="submit">Salvar</button>
     </form>
     <a href="{% url 'home' %}" class=" btn btn-primary mt-5 mb-1"> home</a>

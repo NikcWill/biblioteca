@@ -12,7 +12,7 @@ class Genero(models.Model):
 
 class Livro(models.Model):
     cod = models.IntegerField(unique=True)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=False)
     genery = models.ForeignKey(Genero, on_delete=models.CASCADE, blank=True)
     pg = models.IntegerField()
     picture = models.ImageField(blank=True)
