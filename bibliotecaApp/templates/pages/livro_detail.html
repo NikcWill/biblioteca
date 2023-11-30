@@ -19,7 +19,6 @@
 
     <a href="{% url 'delete-livro' livro.id %}" class="btn btn-danger">Excluir Produto </a>
     <a href="{% url 'add-emprestimo' %}" class="btn btn-secondary">Emprestar Livro </a>
-    <a href="{% url 'devolver-livro' livro.id %}" class="btn btn-secondary">Devolver Livro </a>
     <a href="{% url 'home'  %}" class="btn btn-secondary">Voltar a home </a>
     {% if livro.picture %}
         <img id="imagem" src="{{ livro.picture.url }}" alt="">

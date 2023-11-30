@@ -45,7 +45,14 @@ def get_livros_base_cliente(user, cliente):
 
 def cliente_detail(request, id):
   cliente = Cliente.objects.get(id=id)
-  emprestimos = Emprestimo.objects.filter(cliente_id=id)
+  emprestimos = Emprestimo.objects.filter(cliente_id=id, devolvido=False)
+  livros_emprestados = [emprestimo.livro for emprestimo in emprestimos]
+  
+  return render(request, 'pages/cliente_detail.html', {'cliente': cliente, 'livros_emprestados': livros_emprestados})
+
+def historico_cliente(request, id):
+  cliente = Cliente.objects.get(id=id)
+  emprestimos = Emprestimo.objects.filter(cliente_id=id, devolvido=True)
   livros_emprestados = [emprestimo.livro for emprestimo in emprestimos]
   
   return render(request, 'pages/cliente_detail.html', {'cliente': cliente, 'livros_emprestados': livros_emprestados})
@@ -100,7 +107,9 @@ def add_emprestimo(request):
                     livro_id=livro_id,
                     data_emprestimo=data_emprestimo,
                     data_prev_devolucao=data_prev_devolucao,
-                    data_devolucao=data_devolucao
+                    data_devolucao=data_devolucao,
+                    devolvido=False
+
                 )
 
                 # Atualiza a quantidade de livros emprestados para o livro atual
@@ -125,27 +134,22 @@ def add_emprestimo(request):
 def devolver_livro(request, emprestimo_id):
     emprestimo = get_object_or_404(Emprestimo, id=emprestimo_id)
     cliente = emprestimo.cliente
-    emprestimos = Emprestimo.objects.filter(cliente_id=emprestimo_id)
-    livros_emprestados = [emprestimo.livro for emprestimo in emprestimos]
 
-    if request.method == 'POST':
-        # Atualize a data de devolução do empréstimo para o momento atual
-        emprestimo.data_devolucao = datetime.now()
-        emprestimo.save()
+    
+    emprestimo.data_devolucao = datetime.now()
+    emprestimo.devolvido = True
+    emprestimo.save()
 
+   
+    livro_devolvido = emprestimo.livro
+    livro_devolvido.emprestado -= 1
+    livro_devolvido.save()
 
-        # Atualize a quantidade de livros emprestados para o livro devolvido
-        livro_devolvido = emprestimo.livro
-        livro_devolvido.emprestado -= 1
-        livro_devolvido.save()
+    
+    cliente.qtd_livros -= 1
+    cliente.save()  
 
-        # Atualize a quantidade de livros emprestados para o cliente
-        cliente.qtd_livros -= 1
-        cliente.save()  
-
-        return redirect('cliente-detail', id=cliente.id)  # Redirecione para a página do cliente
-    else:
-        return render(request, 'pages/cliente_detail.html', {'cliente': cliente, 'livros_emprestados': livros_emprestados})
+    return redirect('cliente-detail', id=cliente.id)  
 
 
 
