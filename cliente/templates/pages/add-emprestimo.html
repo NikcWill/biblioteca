@@ -12,22 +12,49 @@
 </head>
 <body>
     <h1> Empresta o livro malandro</h1>
-    <form method="POST"  class="container mt-5" enctype="multipart/form-data">{% csrf_token %}
-        <select name="livro" id="">
-            <option value="" selected disabled>Selecione um livro</option>
-            {% for livro in livros %}
-            <option value="{{ livro.id }}">{{ livro.name }}</option>
-            {% endfor %}
-        </select>
-        <select name="cliente" id="">
-            <option value="" selected disabled>Selecione um cliente</option>
-            {% for cliente in clientes %}
+    <form method="POST" action="{% url 'add-emprestimo' %}" class="container mt-5" enctype="multipart/form-data">
+    {% csrf_token %}
+    <select name="cliente" id="">
+        <option value="" selected disabled>Selecione um cliente</option>
+        {% for cliente in clientes %}
             <option value="{{ cliente.id }}">{{ cliente.name }}</option>
+        {% endfor %}
+    </select>
+
+    <h2>Livros Disponíveis para Empréstimo</h2>
+    <table class="table table-dark m-5">
+        <thead>
+            <tr>
+                <th scope="col">Selecionar</th>
+                <th scope="col">Cod</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Autor</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for livro in livros %}
+                <tr>
+                    <td scope="row">
+                        <input type="checkbox" name="livros_emprestimo[]" value="{{ livro.id }}">
+                    </td>
+                    <td>{{ livro.cod }}</td>
+                    <td>
+                        <a href="{% url 'livro-detail' livro.id %}">
+                            {{ livro.name }}
+                        </a>
+                    </td>
+                    <td>{{ livro.author }}</td>
+                    
+                </tr>
             {% endfor %}
-        </select>
-        <input type="text" name="data_prev_devolucao" placeholder="data para devolução">        
-        <button type="submit">Salvar</button>
-    </form>
+        </tbody>
+    </table>
+    
+    <input type="text" name="data_prev_devolucao" placeholder="data para devolução">
+    
+    <button type="submit">Salvar</button>
+</form>
     <a href="{% url 'home' %}" class=" btn btn-primary mt-5 mb-1"> home</a>
 </body>
 </html>

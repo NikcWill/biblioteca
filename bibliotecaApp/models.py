@@ -26,7 +26,7 @@ class Livro(models.Model):
     name_sacado = models.CharField(max_length=255)
     created_at = models.DateTimeField()
     in_stock = models.BooleanField(default=False)
-    emprestado = models.IntegerField()
+    emprestado = models.IntegerField(default=0)
 
     
     def __str__(self):
