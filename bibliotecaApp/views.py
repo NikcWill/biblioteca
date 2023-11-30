@@ -11,7 +11,7 @@ def is_manager_or_superuser(user):
 def delete_livro(request, id):
     if not is_manager_or_superuser(request.user):
         messages.error(request, 'Você não tem permissão para excluir este livro.')
-        return redirect('home')  # Redirecionamento personalizado para usuários não autorizados
+        return redirect('home')  
 
     livro = Livro.objects.get(id=id)
     if livro.emprestado <= 0:
