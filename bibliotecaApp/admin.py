@@ -7,12 +7,17 @@ from accounts.models import Cargos, CustomUser
 # from.models import Genero
 
 class LivrosAdmin(admin.ModelAdmin):
-    list_display=['id','name', 'author','qtd', 'in_stock'] 
+    list_display=['id','name', 'author','qtd', 'in_stock', 'empresa'] 
     list_filter=['in_stock']
     search_fields = ['name']
 
 class EmpresasAdmin(admin.ModelAdmin):
     list_display=['id','name', 'cnpj','active', 'created_at'] 
+    list_filter=['active']
+    search_fields = ['name']
+
+class ClientesAdmin(admin.ModelAdmin):
+    list_display=['id','name', 'cpf','active', 'empresa'] 
     list_filter=['active']
     search_fields = ['name']
 
@@ -22,7 +27,7 @@ admin.site.register(Genero)
 admin.site.register(Empresas, EmpresasAdmin)
 admin.site.register(Cargos)
 admin.site.register(CustomUser)
-admin.site.register(Cliente)
+admin.site.register(Cliente, ClientesAdmin)
 admin.site.register(Emprestimo)
 
 # Register your models here.

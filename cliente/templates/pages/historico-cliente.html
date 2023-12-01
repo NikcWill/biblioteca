@@ -26,45 +26,35 @@
    
     <a href="{% url 'home'  %}" class="btn btn-secondary">Voltar a home </a>
   
-    <h2>Livros Emprestados</h2>
-    <table class="table table-dark m-5">
-        <thead>
-            <tr>
-                <th scope="col">Selecionar</th>
-                <th scope="col">Cod</th>
-                <th scope="col">Nome</th>
-                <th scope="col">Autor</th>
-                <th scope="col">Cod emprestimo</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            {% for livro in livros_emprestados %}
-            <tr>
-                <td>
-                    {% for emprestimo in livro.emprestimo_set.all %}
-                    <a href="{% url 'devolver-livro' emprestimo.id %}">
-                        Devolver
-                    </a>
-                    {% endfor %}
-                </td>
-                <td scope="row">{{ livro.cod }}</td>
-                <td>
-                    <a href="{% url 'livro-detail' livro.id %}">
-                        {{ livro.name }}
-                    </a>
-                </td>
-                <td>{{ livro.author }}</td>
-                <td>
-                    {% for emprestimo in livro.emprestimo_set.all %}
-                        {{ emprestimo.id }}
-                    {% endfor %}
-                </td>
-                
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h2>Histórico Livros Emprestados</h2>
+<table class="table table-dark m-5">
+    <thead>
+        <tr>
+            <th scope="col">Cod</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Autor</th>
+            <th scope="col">Cod emprestimo</th>
+            <th scope="col">Dt devolução</th>
+            <th scope="col">Dt prev Devolução</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for emprestimo_info in livros_emprestados %}
+        <tr>
+            <td>{{ emprestimo_info.livro.cod }}</td>
+            <td>
+                <a href="{% url 'livro-detail' emprestimo_info.livro.id %}">
+                    {{ emprestimo_info.livro.name }}
+                </a>
+            </td>
+            <td>{{ emprestimo_info.livro.author }}</td>
+            <td>{{ emprestimo_info.cod_emprestimo }}</td>
+            <td>{{ emprestimo_info.data_devolucao  }}</td>
+            <td>{{ emprestimo_info.data_prev_devolucao  }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
     
 </body>

@@ -23,7 +23,6 @@ class Livro(models.Model):
     picture = models.ImageField(blank=True)
     author = models.CharField(max_length=255)
     qtd = models.IntegerField()
-    name_sacado = models.CharField(max_length=255)
     created_at = models.DateTimeField()
     in_stock = models.BooleanField(default=False)
     emprestado = models.IntegerField(default=0)

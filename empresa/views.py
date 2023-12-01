@@ -2,11 +2,14 @@ from django.shortcuts import render, HttpResponse,redirect
 from.models import Empresas
 from random import randint
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
 
+@login_required(redirect_field_name='login')
 def empresa_detail(request, id):
   empresa = Empresas.objects.get(id=id)
   return render(request, 'pages/empresa_detail.html', {'empresa': empresa})
 
+@login_required(redirect_field_name='login')
 def add_empresa(request, ):
   if request.method == 'POST':
 

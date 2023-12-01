@@ -33,17 +33,18 @@ def add_user(request):
         senhaconfirma = request.POST.get('senha-repete')
         is_active = True
 
-        # Use seu modelo de usuário personalizado
+        cargo = Cargos.objects.get(pk=cargo_id)
+        empresa = Empresas.objects.get(pk=empresa_id)
         
         user = CustomUser.objects.create_user(
-            username=usuario, 
-            email=email,
-            password=senha, 
-            first_name=name,
-            is_active=is_active,
-            cargo_id=cargo_id,
-            empresa_id=empresa_id
-        )
+        username=usuario, 
+        email=email,
+        password=senha, 
+        first_name=name,
+        is_active=is_active,
+        cargo=cargo,  
+        empresa=empresa  
+)
     
 
         return redirect('login')

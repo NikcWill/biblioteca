@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from.models import Livro, Genero
+from cliente.models import Emprestimo
 from random import randint
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -8,6 +9,7 @@ from django.contrib import messages
 def is_manager_or_superuser(user):
     return user.is_superuser or (user.cargo.name == 'Gerente')
 
+@login_required(redirect_field_name='login')
 def delete_livro(request, id):
     if not is_manager_or_superuser(request.user):
         messages.error(request, 'Você não tem permissão para excluir este livro.')
@@ -18,6 +20,7 @@ def delete_livro(request, id):
         livro.delete()
     return redirect('home')
 
+@login_required(redirect_field_name='login')
 def index(request):
     if request.user.is_superuser:
         livros = Livro.objects.filter(in_stock=True)
@@ -28,6 +31,7 @@ def index(request):
 
     return render(request, 'pages/index.html', {'livros': livros})
 
+@login_required(redirect_field_name='login')
 def search_livros(request):
   q = request.GET.get('q')
   if request.user.is_superuser:
@@ -38,7 +42,8 @@ def search_livros(request):
       livros = Livro.objects.filter(name__icontains=q,user_id=request.user.id, in_stock=True)
 
   return render(request, 'pages/index.html', {'livros': livros})
-  
+
+@login_required(redirect_field_name='login')
 def search_livros_emprestados(request):
   q = request.GET.get('q')
   if request.user.is_superuser:
@@ -50,6 +55,7 @@ def search_livros_emprestados(request):
 
   return render(request, 'pages/livros-emprestados.html', {'livros':livros})
 
+@login_required(redirect_field_name='login')
 def livros_emprestados(request):
     if request.user.is_superuser:
         livros = Livro.objects.filter(emprestado__gt=0,in_stock=True)
@@ -87,7 +93,7 @@ def livros_emprestados(request):
 #   elif 'livros-emprestados' in referer:
 #       return redirect('livros-emprestados')
   
-     
+@login_required(redirect_field_name='login')    
 def livro_detail(request, id):
   livro = Livro.objects.get(id=id)
   return render(request, 'pages/livro_detail.html', {'livro': livro})
@@ -104,7 +110,6 @@ def add_livro(request, ):
     picture = request.FILES.get('picture')
     author = request.POST.get('author')
     qtd = request.POST.get('qtd')
-    name_sacado = request.POST.get('name_sacado')
     in_stock = True
     created_at = datetime.now()
     emprestado = 0
@@ -113,7 +118,7 @@ def add_livro(request, ):
     Livro.objects.create(
       user_id=request.user.id, empresa_id=request.user.empresa.id,
       cod=cod, name=name, genery_id=genery, pg=pg, picture=picture,
-      author=author, qtd=qtd, name_sacado=name_sacado,
+      author=author, qtd=qtd,
       created_at=created_at, in_stock=in_stock, emprestado=emprestado
     )
     return redirect('home')

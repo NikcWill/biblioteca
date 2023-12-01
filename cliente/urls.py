@@ -7,7 +7,7 @@ from . import views
 urlpatterns = [
   path('add-cliente/', views.add_cliente, name='add-cliente'),
   path('clientes/', views.clientes, name='clientes'),
-  # path('search-cliente/', views.search_cliente, name='search-cliente'),
+  path('emprestados-livros/', views.emprestados_livros, name='emprestados-livros'),
   path('cliente-detail/<int:id>', views.cliente_detail, name='cliente-detail'),
   path('historico-cliente/<int:id>', views.historico_cliente, name='historico-cliente'),
   path('devolver-livro/<int:emprestimo_id>/', views.devolver_livro, name='devolver-livro'),
