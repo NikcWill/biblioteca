@@ -40,8 +40,20 @@ class Emprestimo(models.Model):
     saldo_de_dias_devolvidos = models.IntegerField()
     dias_para_devolver = models.IntegerField()
 
+    def delete(self, using=None, keep_parents=False):
+        livro = self.livro
+        cliente = self.cliente
+
+        livro.emprestado -= 1
+        livro.save()
+
+        cliente.qtd_livros -= 1
+        cliente.save()
+
+        super().delete(using=using, keep_parents=keep_parents)
+        
     def save(self, *args, **kwargs):
-        # Gere um UUID único ao salvar um novo objeto Emprestimo
+        
         if not self.cod:
             self.cod = str(uuid4())
         super().save(*args, **kwargs)

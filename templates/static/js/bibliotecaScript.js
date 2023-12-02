@@ -5,20 +5,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const dataDevolucao = document.getElementById('data-devolucao');
     const salvarBtn = document.getElementById('salvar-btn');
 
-    // Verifica se o campo do cliente foi preenchido
     clienteForm.addEventListener('change', function() {
         buscarBtn.disabled = !clienteForm.q.value;
     });
 
-    // Verifica se pelo menos um livro foi selecionado ou se a data de devolução foi preenchida
     emprestimoForm.addEventListener('change', function() {
         const checkboxes = document.querySelectorAll('input[name="livros_emprestimo[]"]:checked');
         salvarBtn.disabled = !(checkboxes.length > 0 && dataDevolucao.value.trim() !== '');
     });
 
-    // Verifica se o campo de data de devolução foi preenchido
     dataDevolucao.addEventListener('input', function() {
         const checkboxes = document.querySelectorAll('input[name="livros_emprestimo[]"]:checked');
         salvarBtn.disabled = !(checkboxes.length > 0 && dataDevolucao.value.trim() !== '');
     });
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const emprestimoDeletado = urlParams.get('emprestimo_deletado');
+
+    if (emprestimoDeletado === 'true') {
+        window.location.href = window.location.pathname;
+    }
 });

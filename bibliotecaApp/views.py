@@ -66,32 +66,6 @@ def livros_emprestados(request):
 
     return render(request, 'pages/livros-emprestados.html', {'livros': livros})
 
-
-# @login_required(redirect_field_name='login')
-# def emprestar_livro(request, id):
-#   livro = Livro.objects.get(id=id)
-#   if livro.emprestado < livro.qtd:
-#     livro.emprestado += 1
-#     livro.save()
-    
-#   referer = request.META.get('HTTP_REFERER')  
-#   if 'livro-detail' in referer:
-#       return redirect('livro-detail', id=id)
-#   elif 'livros-emprestados' in referer:
-#       return redirect('livros-emprestados')
-
-# @login_required(redirect_field_name='login')
-# def devolver_livro(request, id):
-#   livro = Livro.objects.get(id=id)
-#   if livro.emprestado > 0:
-#     livro.emprestado -= 1
-#     livro.save()
-    
-#   referer = request.META.get('HTTP_REFERER')
-#   if 'livro-detail' in referer:
-#       return redirect('livro-detail', id=id)
-#   elif 'livros-emprestados' in referer:
-#       return redirect('livros-emprestados')
   
 @login_required(redirect_field_name='login')    
 def livro_detail(request, id):

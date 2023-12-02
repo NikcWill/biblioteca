@@ -10,8 +10,6 @@ urlpatterns = [
     path('search-livros-emprestados/', views.search_livros_emprestados, name='search-livros-emprestados'),
     path('add-livro/', views.add_livro, name='add-livro'),
     path('livros-emprestados/', views.livros_emprestados, name='livros-emprestados'),
-    # path('emprestar-livro/<int:id>/', views.emprestar_livro, name='emprestar-livro'),
-    # path('devolver-livro/<int:id>', views.devolver_livro, name='devolver-livro'),
     path('delete-livro/<int:id>', views.delete_livro, name='delete-livro'),
     path('livro-detail/<int:id>', views.livro_detail, name='livro-detail')
 ]

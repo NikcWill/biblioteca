@@ -10,6 +10,7 @@ from uuid import uuid4
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.db.models import Q
+from django.contrib import messages
 
 
 
@@ -270,3 +271,8 @@ def data_calculate(data_1, data_2):
 
     return diferenca.days
 
+def deletar_emprestimo(request, emprestimo_id):
+    emprestimo = get_object_or_404(Emprestimo, id=emprestimo_id)
+    emprestimo.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER') + '?emprestimo_deletado=true')
+    
