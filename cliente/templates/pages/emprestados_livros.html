@@ -24,6 +24,8 @@
                 <th scope="col">Autor</th>
                 <th scope="col">Cliente</th>
                 <th scope="col">Dt prev Devolução</th>
+                <th scope="col">Dias p devolver</th>
+                
                 
 
             </tr>
@@ -46,6 +48,7 @@
                 <td>{{ emprestimo_info.livro.author }}</td>
                 <td>{{ emprestimo_info.cliente }}</td>
                 <td>{{ emprestimo_info.data_prev_devolucao }}</td>
+                <td>{{ emprestimo_info.dias_para_devolver }}</td>
             </tr>
             {% endfor %}
         </tbody>

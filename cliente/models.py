@@ -37,6 +37,8 @@ class Emprestimo(models.Model):
     data_prev_devolucao = models.DateTimeField()
     data_devolucao = models.DateTimeField(null=True, blank=True)
     devolvido = models.BooleanField(default=False)
+    saldo_de_dias_devolvidos = models.IntegerField()
+    dias_para_devolver = models.IntegerField()
 
     def save(self, *args, **kwargs):
         # Gere um UUID único ao salvar um novo objeto Emprestimo

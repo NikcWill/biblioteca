@@ -26,6 +26,7 @@
    
     <a href="{% url 'home'  %}" class="btn btn-secondary">Voltar a home </a>
     <a href="{% url 'historico-cliente' cliente.id %}" class="btn btn-secondary">Histórico</a>
+    <a href="{% url 'clientes' %}" class="btn btn-secondary">Clientes</a>
   
     <h2>Livros Emprestados</h2>
 <table class="table table-dark m-5">
@@ -37,6 +38,7 @@
             <th scope="col">Autor</th>
             <th scope="col">Cod emprestimo</th>
             <th scope="col">Dt prev entrega</th>
+            <th scope="col">Dias p devolver</th>
         </tr>
     </thead>
     <tbody>
@@ -56,6 +58,7 @@
             <td>{{ emprestimo_info.livro.author }}</td>
             <td>{{ emprestimo_info.cod_emprestimo }}</td>
             <td>{{ emprestimo_info.data_prev_devolucao }}</td>
+            <td>{{ emprestimo_info.dias_para_devolver }}</td>
         </tr>
         {% endfor %}
     </tbody>

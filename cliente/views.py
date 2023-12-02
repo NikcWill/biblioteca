@@ -55,23 +55,29 @@ def cliente_detail(request, id):
     cliente = Cliente.objects.get(id=id)
     emprestimos = Emprestimo.objects.filter(cliente_id=id, devolvido=False)
     
-    # Criando uma lista de dicionários contendo informações relevantes do empréstimo
     livros_emprestados = []
-    data_prev_devolucao = None  # Inicializa data_prev_devolucao como None
+    data_prev_devolucao = None  
 
-    for emprestimo in emprestimos:
-        livros_emprestados.append({
-            'livro': emprestimo.livro,
-            'cod_emprestimo': emprestimo.id,
-            'data_prev_devolucao': emprestimo.data_prev_devolucao,
-        })
+    if emprestimos.exists():  
+        for emprestimo in emprestimos:
+            livros_emprestados.append({
+                'livro': emprestimo.livro,
+                'cod_emprestimo': emprestimo.id,
+                'data_prev_devolucao': emprestimo.data_prev_devolucao,
+                'dias_para_devolver' : emprestimo.dias_para_devolver, 
+            })
 
-        data_prev_devolucao = emprestimo.data_prev_devolucao  # Atualiza data_prev_devolucao
+            data_prev_devolucao = emprestimo.data_prev_devolucao  
+    else:
+        # Se não houver empréstimos, define a lista de livros emprestados como vazia
+        livros_emprestados = []
+        # Pode definir um valor padrão para data_prev_devolucao, se necessário
 
     return render(request, 'pages/cliente_detail.html', {
         'cliente': cliente,
         'livros_emprestados': livros_emprestados,
-        'data_prev_devolucao': data_prev_devolucao,  # Passa data_prev_devolucao para o contexto
+        'data_prev_devolucao': data_prev_devolucao,
+        # outros contextos...
     })
 
 @login_required(redirect_field_name='login')
@@ -79,23 +85,31 @@ def historico_cliente(request, id):
     cliente = Cliente.objects.get(id=id)
     emprestimos = Emprestimo.objects.filter(cliente_id=id, devolvido=True)
     
-    # Criando uma lista de dicionários contendo informações relevantes do empréstimo
     livros_emprestados = []
-    for emprestimo in emprestimos:
-        livros_emprestados.append({
-            'livro': emprestimo.livro,
-            'cod_emprestimo': emprestimo.id,
-            'data_devolucao': emprestimo.data_devolucao,
-            'data_prev_devolucao': emprestimo.data_prev_devolucao,
-        })
+    data_devolucao = None
+    data_prev_devolucao = None
+    saldo_de_dias_devolvidos = None  # Adicione essa linha
+
+    if emprestimos:
+        for emprestimo in emprestimos:
+            livros_emprestados.append({
+                'livro': emprestimo.livro,
+                'cod_emprestimo': emprestimo.id,
+                'data_devolucao': emprestimo.data_devolucao,
+                'data_prev_devolucao': emprestimo.data_prev_devolucao,
+                'saldo_de_dias_devolvidos': emprestimo.saldo_de_dias_devolvidos
+            })
+            data_devolucao = emprestimo.data_devolucao
+            data_prev_devolucao = emprestimo.data_prev_devolucao
+            saldo_de_dias_devolvidos = emprestimo.saldo_de_dias_devolvidos
 
     return render(request, 'pages/historico-cliente.html', {
         'cliente': cliente,
         'livros_emprestados': livros_emprestados,
-        'data_devolucao': emprestimo.data_devolucao,
-        'data_prev_devolucao': emprestimo.data_prev_devolucao,
+        'data_devolucao': data_devolucao,
+        'data_prev_devolucao': data_prev_devolucao,
+        'saldo_de_dias_devolvidos': saldo_de_dias_devolvidos  # Adicione essa variável ao contexto
     })
-
 
 @login_required(redirect_field_name='login')
 def clientes(request):
@@ -120,7 +134,7 @@ def add_cliente(request ):
       created_at=created_at, qtd_livros=qtd_livros
       )
     return redirect('home')
-  else:  # Para requisições GET, renderize o formulário de adição de cliente
+  else:  
         return render(request, 'pages/add-cliente.html')
 
 @login_required(redirect_field_name='login')
@@ -129,10 +143,11 @@ def add_emprestimo(request):
         cliente_id = request.POST.get('cliente')
         livros_selecionados = request.POST.getlist('livros_emprestimo[]')
 
-        data_emprestimo = datetime.now()
+        data_emprestimo = datetime.now().strftime('%Y-%m-%d')  # Convertendo para string 'YYYY-MM-DD'
         data_prev_devolucao_str = request.POST.get('data_prev_devolucao')
         data_prev_devolucao = datetime.strptime(data_prev_devolucao_str, '%d/%m/%Y').strftime('%Y-%m-%d')
         data_devolucao = request.POST.get('data_devolucao')
+
 
         for livro_id in livros_selecionados:
             livro = Livro.objects.get(id=livro_id)
@@ -148,16 +163,16 @@ def add_emprestimo(request):
                     data_emprestimo=data_emprestimo,
                     data_prev_devolucao=data_prev_devolucao,
                     data_devolucao=data_devolucao,
-                    devolvido=False
+                    devolvido=False,
+                    saldo_de_dias_devolvidos=0,
+                    dias_para_devolver=data_calculate(data_prev_devolucao, data_emprestimo)
 
                 )
 
-                # Atualiza a quantidade de livros emprestados para o livro atual
                 quantidade_emprestada_livro = Emprestimo.objects.filter(livro_id=livro_id, data_devolucao__isnull=True).count()
                 livro.emprestado = quantidade_emprestada_livro
                 livro.save()
 
-        # Atualiza a quantidade de livros emprestados para o cliente
         quantidade_emprestada_cliente = Emprestimo.objects.filter(cliente_id=cliente_id, data_devolucao__isnull=True).count()
         cliente = Cliente.objects.get(id=cliente_id)
         cliente.qtd_livros = quantidade_emprestada_cliente
@@ -177,6 +192,7 @@ def devolver_livro(request, emprestimo_id):
     if cliente.qtd_livros > 0:
         emprestimo.data_devolucao = datetime.now()
         emprestimo.devolvido = True
+        emprestimo.saldo_de_dias_devolvidos = data_calculate(emprestimo.data_prev_devolucao.strftime('%Y-%m-%d'), datetime.now().strftime('%Y-%m-%d'))
         emprestimo.save()
 
         livro_devolvido = emprestimo.livro
@@ -188,28 +204,22 @@ def devolver_livro(request, emprestimo_id):
 
     redirect_url = request.META.get('HTTP_REFERER')
 
-    # Redireciona de volta para a página de onde veio ou para a página inicial se não houver URL de referência
     return HttpResponseRedirect(redirect_url or '/') 
 
 @login_required(redirect_field_name='login')
 def selecionar_cliente(request):
-    q = request.GET.get('q')  # Obtém o ID do cliente da solicitação GET
+    q = request.GET.get('q')  
 
-    # Obter o usuário logado
     user = request.user
 
-    # Verificar as permissões do usuário para clientes
     clientes = get_clientes_based_on_permission(user)
 
-    # Certificar-se de que o cliente selecionado está dentro das permissões do usuário
     cliente = get_object_or_404(clientes, id=q)
 
-    # Filtrar os livros emprestados e não devolvidos para o cliente selecionado
     livros_emprestados_cliente = Emprestimo.objects.filter(
         cliente_id=cliente.id, devolvido=False
     ).values_list('livro_id', flat=True)
 
-    # Filtrar os livros disponíveis para empréstimo excluindo os já emprestados e que não estão na mesma empresa do cliente
     livros_nao_emprestados = Livro.objects.filter(
         in_stock=True, empresa_id=cliente.empresa_id
     ).exclude(
@@ -242,9 +252,22 @@ def emprestados_livros(request):
                 'livro': livro,
                 'emprestimo': emprestimo,
                 'cliente': emprestimo.cliente,
-                'data_prev_devolucao': emprestimo.data_prev_devolucao,  
+                'data_prev_devolucao': emprestimo.data_prev_devolucao,
+                'dias_para_devolver' : emprestimo.dias_para_devolver, 
             })
 
     return render(request, 'pages/emprestados_livros.html', {
         'emprestimos_info': emprestimos_info,
     })
+
+def data_calculate(data_1, data_2):
+    if isinstance(data_1, str):
+        data_1 = datetime.strptime(data_1, '%Y-%m-%d')
+    if isinstance(data_2, str):
+        data_2 = datetime.strptime(data_2, '%Y-%m-%d')
+
+    diferenca = data_1 - data_2
+
+    return diferenca.days
+
+    
