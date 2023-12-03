@@ -146,7 +146,7 @@ def add_emprestimo(request):
 
         data_emprestimo = datetime.now().strftime('%Y-%m-%d')  # Convertendo para string 'YYYY-MM-DD'
         data_prev_devolucao_str = request.POST.get('data_prev_devolucao')
-        data_prev_devolucao = datetime.strptime(data_prev_devolucao_str, '%d/%m/%Y').strftime('%Y-%m-%d')
+        data_prev_devolucao = datetime.strptime(data_prev_devolucao_str, '%Y-%m-%d')
         data_devolucao = request.POST.get('data_devolucao')
 
 

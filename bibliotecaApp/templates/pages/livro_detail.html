@@ -11,6 +11,21 @@
     <title>Document</title>
 </head>
 <body>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %} alert-{{ message.tags }} {% endif %} mt-2">
+                <h3>{{ message }}</h3>
+            </div>
+        {% endfor %}
+        <script>
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.display = 'none';
+                });
+            }, 3000); 
+        </script>
+    {% endif %}
     <H1>Nome do livro: {{ livro.name }}</H1>
     <h2>Quantidade: {{ livro.qtd }}</h2>
     <h2>Genero: {{ livro.genery }}</h2>

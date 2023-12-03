@@ -3,6 +3,9 @@ from empresa.models import Empresas
 from accounts.models import CustomUser
 
 class Genero(models.Model):
+    cod = models.IntegerField(unique=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    empresa = models.ForeignKey(Empresas, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
 
     def __str__(self):

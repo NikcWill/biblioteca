@@ -27,11 +27,19 @@
         </nav>
     </header>
     {% if messages %}
-    <ul class="messages">
         {% for message in messages %}
-            <li>{{ message }}</li>
+            <div class="alert {% if message.tags %} alert-{{ message.tags }} {% endif %} mt-2">
+                <h3>{{ message }}</h3>
+            </div>
         {% endfor %}
-    </ul>
+        <script>
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.display = 'none';
+                });
+            }, 3000); 
+        </script>
     {% endif %}
     <a href="{% url 'add-livro' %}" class=" btn btn-primary mt-5 mb-1"> adicionar produto</a>
     <a href="{% url 'add-cliente' %}" class=" btn btn-primary mt-5 mb-1"> adicionar cliente</a>

@@ -6,19 +6,24 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+
 def is_manager_or_superuser(user):
     return user.is_superuser or (user.cargo.name == 'Gerente')
 
 @login_required(redirect_field_name='login')
 def delete_livro(request, id):
     if not is_manager_or_superuser(request.user):
-        messages.error(request, 'Você não tem permissão para excluir este livro.')
-        return redirect('home')  
+        messages.error(request, 'Você não tem permissão para excluir este livro.',extra_tags='warning')
+        return redirect('livro-detail', id=livro.id) 
 
     livro = Livro.objects.get(id=id)
     if livro.emprestado <= 0:
         livro.delete()
-    return redirect('home')
+        messages.success(request, 'Livro deletado com sucesso.', extra_tags='success')
+        return redirect('home')
+    else:
+        messages.error(request, 'Não é possível deletar livros emprestados.', extra_tags='warning')
+    return redirect('livro-detail', id=livro.id)
 
 @login_required(redirect_field_name='login')
 def index(request):
@@ -95,8 +100,46 @@ def add_livro(request, ):
       author=author, qtd=qtd,
       created_at=created_at, in_stock=in_stock, emprestado=emprestado
     )
-    return redirect('home')
+    messages.success(request, 'Livro adicionado com sucesso.', extra_tags='success')
+    return redirect('add-livro')
 
   else:
+    livros = Livro.objects.all()
     genero = Genero.objects.all()
-    return render(request, 'pages/add-livro.html', {'generos': genero})
+    return render(request, 'pages/add-livro.html', {'generos': genero,'livros': livros})
+
+@login_required(redirect_field_name='login')
+def add_genero(request):
+    if request.method == 'POST':
+        cod = randint(100, 10000)
+        name = request.POST.get('name')
+
+        existente_genero = Genero.objects.filter(name=name).first()
+        if existente_genero:
+            messages.error(request, 'Não é possível criar este gênero pois há livros emprestados associados a ele.', extra_tags='warning')
+            return redirect('add-genero')
+        else:
+            new_genero = Genero.objects.create(
+                user_id=request.user.id, empresa_id=request.user.empresa.id,
+                name=name, cod=cod
+            )
+            messages.success(request, 'Gênero criado com sucesso.', extra_tags='success')
+            return redirect('add-genero')
+
+    else:
+        generos = Genero.objects.all()
+        return render(request, 'pages/add-genero.html', {'generos': generos})
+
+@login_required(redirect_field_name='login')
+def delete_genero(request, id):
+    genero = Genero.objects.get(id=id)
+
+    livros_emprestados = Livro.objects.filter(genery=genero, emprestado__gt=0)
+    
+    if livros_emprestados.exists():
+        messages.error(request, 'Não é possível excluir este gênero pois há livros emprestados associados a ele.', extra_tags='warning')
+    else:
+        genero.delete()
+        messages.success(request, 'Gênero excluído com sucesso.', extra_tags='success')
+
+    return redirect('add-genero')
