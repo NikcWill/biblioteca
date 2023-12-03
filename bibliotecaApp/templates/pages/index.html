@@ -49,34 +49,37 @@
     <a href="{% url 'add-empresa' %}" class=" btn btn-primary mt-5 mb-1"> Adicionar empresa</a>
 
     <table class="table table-dark m-5">
-        <thead>
-          <tr>
+    <thead>
+        <tr>
+            <th scope="col">Desativar</th>
             <th scope="col">cod</th>
             <th scope="col">Nome</th>
             <th scope="col">Autor</th>
             <th scope="col">Qtd</th>
             <th scope="col">Qtd emprestado</th>
             <th scope="col">User</th>
-            
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {% for livro in livros %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for livro in livros %}
+        <tr>
+            <td>
+                <a href="{% url 'desativar-livro' livro.id %}">Desativar</a>
+            </td>
             <td scope="row">{{ livro.cod }}</td>
             <td>
-              <a href="{% url 'livro-detail' livro.id %}">
-                {{ livro.name }}
-              </a></td>
-            <td>{{ livro.author }}</td> 
-            <td>{{ livro.qtd }}</td> 
-            <td>{{ livro.emprestado }}</td> 
-            <td>{{ livro.user }}</td> 
-          </tr>
-          {% endfor %}
-        
-        </tbody>
-      </table>
+                <a href="{% url 'livro-detail' livro.id %}">
+                    {{ livro.name }}
+                </a>
+            </td>
+            <td>{{ livro.author }}</td>
+            <td>{{ livro.qtd }}</td>
+            <td>{{ livro.emprestado }}</td>
+            <td>{{ livro.user }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
     
 </body>

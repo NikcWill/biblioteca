@@ -21,10 +21,20 @@
         <button type="submit">Salvar</button>
     </form>
     <a href="{% url 'home' %}" class=" btn btn-primary mt-5 mb-1"> home</a>
-    {% if user.is_authenticated %}
-    <a href="{% url 'logout' %}" class="btn btn-primary mt-5 mb-1">Logout</a>
-    {% else %}
-    <a href="{% url 'login' %}" class="btn btn-primary mt-5 mb-1">Login</a>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %} alert-{{ message.tags }} {% endif %} mt-2">
+                <h3>{{ message }}</h3>
+            </div>
+        {% endfor %}
+        <script>
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.display = 'none';
+                });
+            }, 3000); 
+        </script>
     {% endif %}
     
     <table class="table table-dark m-5">
@@ -33,7 +43,11 @@
                 <th scope="col">Ação</th>
                 <th scope="col">cod</th>
                 <th scope="col">Nome</th>
-                <th scope="col">User</th>
+                <th scope="col">CNPJ</th>
+                <th scope="col">Users</th>
+                <th scope="col">Livros</th>
+                <th scope="col">Livros emprestados</th>
+                <th scope="col">Clientes</th>
             </tr>
         </thead>
         <tbody>
@@ -49,6 +63,10 @@
                     <td><a href="{% url 'empresa-detail' empresa.id %}">{{ empresa.id }}</a></td>
                     <td><a href="{% url 'empresa-detail' empresa.id %}">{{ empresa.name }}</a></td>
                     <td>{{ empresa.cnpj }}</td> 
+                    <td>{{ empresa.total_users }}</td>
+                    <td>{{ empresa.total_books }}</td>
+                    <td>{{ empresa.total_loans }}</td>
+                    <td>{{ empresa.total_clients }}</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -104,8 +104,21 @@ def add_livro(request, ):
     return redirect('add-livro')
 
   else:
-    livros = Livro.objects.all()
-    genero = Genero.objects.all()
+    if request.user.is_superuser:
+        livros = Livro.objects.all()
+    elif request.user.cargo.name == 'Gerente':
+        livros = Livro.objects.filter(empresa_id=request.user.empresa.id)
+    else:
+        livros = Livro.objects.filter(user_id=request.user.id)
+    
+    if request.user.is_superuser:
+        genero = Genero.objects.all()
+    elif request.user.cargo.name == 'Gerente':
+        genero = Genero.objects.filter(empresa_id=request.user.empresa.id)
+    else:
+        genero= Genero.objects.filter(user_id=request.user.id)
+    
+
     return render(request, 'pages/add-livro.html', {'generos': genero,'livros': livros})
 
 @login_required(redirect_field_name='login')
@@ -113,6 +126,7 @@ def add_genero(request):
     if request.method == 'POST':
         cod = randint(100, 10000)
         name = request.POST.get('name')
+        active = True
 
         existente_genero = Genero.objects.filter(name=name).first()
         if existente_genero:
@@ -121,14 +135,20 @@ def add_genero(request):
         else:
             new_genero = Genero.objects.create(
                 user_id=request.user.id, empresa_id=request.user.empresa.id,
-                name=name, cod=cod
+                name=name, cod=cod, active=active
             )
             messages.success(request, 'Gênero criado com sucesso.', extra_tags='success')
             return redirect('add-genero')
 
     else:
-        generos = Genero.objects.all()
-        return render(request, 'pages/add-genero.html', {'generos': generos})
+            if request.user.is_superuser:
+                genero = Genero.objects.filter(active=True)
+            elif request.user.cargo.name == 'Gerente':
+                genero = Genero.objects.filter(empresa_id=request.user.empresa.id, active=True)
+            else:
+                genero= Genero.objects.filter(user_id=request.user.id, active=True)
+    
+            return render(request, 'pages/add-genero.html', {'generos': genero})
 
 @login_required(redirect_field_name='login')
 def delete_genero(request, id):
@@ -143,3 +163,29 @@ def delete_genero(request, id):
         messages.success(request, 'Gênero excluído com sucesso.', extra_tags='success')
 
     return redirect('add-genero')
+
+@login_required(redirect_field_name='login')
+def desativar_livro(request, id):
+    livro = Livro.objects.get(id=id)
+    
+    emprestimos_ativos = Emprestimo.objects.filter(livro_id=id, devolvido=False).exists()
+    
+    if emprestimos_ativos:
+        messages.error(request, 'Não é possível desativar o livro. Existem empréstimos pendentes associados a ele.', extra_tags='warning')
+    else:
+        livro.in_stock = False
+        livro.save()
+        messages.success(request, 'Livro desativado.', extra_tags='success')
+    
+    return redirect(request.META.get('HTTP_REFERER'))
+
+@login_required(redirect_field_name='login')
+def ativar_livro(request, id):
+    livro = Livro.objects.get(id=id)
+    livro.in_stock = True
+    livro.save()
+
+    messages.success(request, 'Livro ativado.', extra_tags='success')
+    
+    return redirect(request.META.get('HTTP_REFERER'))
+    

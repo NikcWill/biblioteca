@@ -7,6 +7,7 @@ class Genero(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresas, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

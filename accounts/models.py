@@ -15,6 +15,7 @@ class Cargos(models.Model):
 class CustomUser(AbstractUser):
     cargo = models.ForeignKey(Cargos, on_delete=models.SET_NULL, null=True, blank=True)
     empresa = models.ForeignKey(Empresas, on_delete=models.SET_NULL, null=True, blank=True)
+    
 
     groups = models.ManyToManyField(
         'auth.Group',
