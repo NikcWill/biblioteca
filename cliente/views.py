@@ -182,7 +182,14 @@ def add_emprestimo(request):
         cliente.qtd_livros = quantidade_emprestada_cliente
         cliente.save()
 
-        return redirect('home')
+        clientes = get_clientes_based_on_permission(request.user)
+        livros = get_livros_based_on_permission(request.user)
+        messages.success(
+            request,
+            f'O livro "{livro.name}" foi emprestado para o cliente "{cliente.name}"com sucesso.',
+            extra_tags='success'
+        )
+        return render(request, 'pages/add-emprestimo.html', {'clientes': clientes, 'livros': livros})
     else:
         clientes = get_clientes_based_on_permission(request.user)
         livros = get_livros_based_on_permission(request.user)
@@ -207,7 +214,11 @@ def devolver_livro(request, emprestimo_id):
         cliente.save()  
 
     redirect_url = request.META.get('HTTP_REFERER')
-
+    messages.success(
+            request,
+            f'O livro "{livro_devolvido.name}" foi emprestado para o cliente "{cliente.name}"com sucesso.',
+            extra_tags='success'
+        )
     return HttpResponseRedirect(redirect_url or '/') 
 
 @login_required(redirect_field_name='login')
@@ -277,16 +288,36 @@ def data_calculate(data_1, data_2):
 
 @login_required(redirect_field_name='login')
 def deletar_emprestimo(request, emprestimo_id):
+    if not request.user.is_superuser:
+        messages.error(request, 'Você não tem permissão para deletar um empréstimo.', extra_tags='warning')
+        return redirect('historico-cliente')
+
     emprestimo = get_object_or_404(Emprestimo, id=emprestimo_id)
+    
+    cliente = emprestimo.cliente
+    livro = emprestimo.livro
+    
+    # Atualizar a quantidade de livros emprestados pelo cliente
+    cliente.qtd_livros += 1
+    cliente.save()
+
+    # Atualizar a quantidade emprestada do livro correspondente
+    livro.emprestado += 1
+    livro.save()
+
+    # Deletar o empréstimo
     emprestimo.delete()
+    
+    messages.success(
+        request,
+        f'O livro "{livro.name}" foi deletado dos registros com sucesso.',
+        extra_tags='success'
+    )
     return HttpResponseRedirect(request.META.get('HTTP_REFERER') + '?emprestimo_deletado=true')
 
 @login_required(redirect_field_name='login')
 def desativar_cliente(request, id):
-    if not request.user.is_superuser:
-        messages.error(request, 'Você não tem permissão para desativar um cliente.', extra_tags='warning')
-        return redirect('home')
-
+    
     cliente = get_object_or_404(Cliente, id=id)
 
     emprestimos_ativos = Emprestimo.objects.filter(
@@ -305,10 +336,7 @@ def desativar_cliente(request, id):
     
 @login_required(redirect_field_name='login')
 def ativar_cliente(request, id):
-    if not request.user.is_superuser:
-        messages.error(request, 'Você não tem permissão para ativar um cliente.', extra_tags='warning')
-        return redirect('home')
-
+    
     cliente = get_object_or_404(Cliente, id=id)
     
     cliente.active = True

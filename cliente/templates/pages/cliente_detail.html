@@ -27,6 +27,22 @@
     <a href="{% url 'home'  %}" class="btn btn-secondary">Voltar a home </a>
     <a href="{% url 'historico-cliente' cliente.id %}" class="btn btn-secondary">Histórico</a>
     <a href="{% url 'clientes' %}" class="btn btn-secondary">Clientes</a>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %} alert-{{ message.tags }} {% endif %} mt-2">
+                <h3>{{ message }}</h3>
+            </div>
+        {% endfor %}
+        <script>
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.display = 'none';
+                });
+            }, 3000); 
+        </script>
+    {% endif %}
   
     <h2>Livros Emprestados</h2>
 <table class="table table-dark m-5">

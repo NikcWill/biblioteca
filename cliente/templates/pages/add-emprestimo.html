@@ -25,7 +25,21 @@
         <button id="buscar-btn" class="btn btn-success" disabled>Buscar</button>
     </form>
 
-    <!-- Formulário para empréstimo de livros -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %} alert-{{ message.tags }} {% endif %} mt-2">
+                <h3>{{ message }}</h3>
+            </div>
+        {% endfor %}
+        <script>
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.display = 'none';
+                });
+            }, 3000); 
+        </script>
+    {% endif %}
     <form id="emprestimo-form" method="POST" action="{% url 'add-emprestimo' %}" class="container mt-5" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="hidden" name="cliente" value="{{ cliente.id }}"> 
