@@ -264,7 +264,7 @@ def emprestados_livros(request):
         'emprestimos_info': emprestimos_info,
     })
 
-@login_required(redirect_field_name='login')
+
 def data_calculate(data_1, data_2):
     if isinstance(data_1, str):
         data_1 = datetime.strptime(data_1, '%Y-%m-%d')
