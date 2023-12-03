@@ -14,6 +14,7 @@ from django.contrib import messages
 
 
 
+
 def get_clientes_based_on_permission(user):
     if user.is_superuser:
         return Cliente.objects.all()
@@ -114,29 +115,31 @@ def historico_cliente(request, id):
 
 @login_required(redirect_field_name='login')
 def clientes(request):
-    clientes = get_clientes_based_on_permission(request.user)
+    clientes = get_clientes_based_active(request.user)
     return render(request, 'pages/clientes.html', {'clientes': clientes})
 
+
 @login_required(redirect_field_name='login')
-def add_cliente(request ):
-  if request.method == 'POST':
+def add_cliente(request):
+    if request.method == 'POST':
+        cod = randint(100, 10000) 
+        name = request.POST.get('name')
+        cpf = request.POST.get('cpf')
+        email = request.POST.get('email')
+        active = True
+        created_at = datetime.now()
+        qtd_livros = 0
 
-    cod = randint(100, 10000) 
-    name = request.POST.get('name')
-    cpf = request.POST.get('cpf')
-    email = request.POST.get('email')
-    active = True
-    created_at = datetime.now()
-    qtd_livros = 0
-
-    Cliente.objects.create(
-      user_id=request.user.id, empresa_id=request.user.empresa.id,
-      cod=cod, name=name, cpf=cpf, email=email, active=active,
-      created_at=created_at, qtd_livros=qtd_livros
-      )
-    return redirect('home')
-  else:  
-        return render(request, 'pages/add-cliente.html')
+        Cliente.objects.create(
+            user_id=request.user.id, empresa_id=request.user.empresa.id,
+            cod=cod, name=name, cpf=cpf, email=email, active=active,
+            created_at=created_at, qtd_livros=qtd_livros
+        )
+        messages.success(request, 'Cliente cadastrado com sucesso.', extra_tags='success')
+        return redirect('add-cliente')
+    else:
+        clientes = get_clientes_based_on_permission(request.user)
+        return render(request, 'pages/add-cliente.html', {'clientes': clientes})
 
 @login_required(redirect_field_name='login')
 def add_emprestimo(request):
@@ -144,7 +147,7 @@ def add_emprestimo(request):
         cliente_id = request.POST.get('cliente')
         livros_selecionados = request.POST.getlist('livros_emprestimo[]')
 
-        data_emprestimo = datetime.now().strftime('%Y-%m-%d')  # Convertendo para string 'YYYY-MM-DD'
+        data_emprestimo = datetime.now().strftime('%Y-%m-%d') 
         data_prev_devolucao_str = request.POST.get('data_prev_devolucao')
         data_prev_devolucao = datetime.strptime(data_prev_devolucao_str, '%Y-%m-%d')
         data_devolucao = request.POST.get('data_devolucao')
@@ -261,6 +264,7 @@ def emprestados_livros(request):
         'emprestimos_info': emprestimos_info,
     })
 
+@login_required(redirect_field_name='login')
 def data_calculate(data_1, data_2):
     if isinstance(data_1, str):
         data_1 = datetime.strptime(data_1, '%Y-%m-%d')
@@ -271,8 +275,44 @@ def data_calculate(data_1, data_2):
 
     return diferenca.days
 
+@login_required(redirect_field_name='login')
 def deletar_emprestimo(request, emprestimo_id):
     emprestimo = get_object_or_404(Emprestimo, id=emprestimo_id)
     emprestimo.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER') + '?emprestimo_deletado=true')
+
+@login_required(redirect_field_name='login')
+def desativar_cliente(request, id):
+    if not request.user.is_superuser:
+        messages.error(request, 'Você não tem permissão para desativar um cliente.', extra_tags='warning')
+        return redirect('home')
+
+    cliente = get_object_or_404(Cliente, id=id)
+
+    emprestimos_ativos = Emprestimo.objects.filter(
+        cliente_id=cliente.id, devolvido=False
+    ).exists()
+
+    if emprestimos_ativos:
+        messages.error(request, 'Existem empréstimos associados a este cliente. Não é possível desativá-lo.', extra_tags='warning')
+        return redirect('add-cliente')
+
+    cliente.active = False
+    cliente.save()
+
+    messages.success(request, 'Cliente desativado com sucesso.', extra_tags='success')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER') + '?desativar_cliente=true')
     
+@login_required(redirect_field_name='login')
+def ativar_cliente(request, id):
+    if not request.user.is_superuser:
+        messages.error(request, 'Você não tem permissão para ativar um cliente.', extra_tags='warning')
+        return redirect('home')
+
+    cliente = get_object_or_404(Cliente, id=id)
+    
+    cliente.active = True
+    cliente.save()
+
+    messages.success(request, 'Cliente ativado com sucesso.', extra_tags='success')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER') + '?ativar_cliente=true')

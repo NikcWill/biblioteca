@@ -46,23 +46,27 @@ def add_empresa(request):
             created_at=created_at
         )
 
-        # Recalcula os totais após adicionar uma nova empresa
-        empresas = Empresas.objects.annotate(
-            total_users=Count('customuser'),
-            total_books=Count('livro'),
-            total_loans=Count('emprestimo'),
-            total_clients=Count('cliente')
-        )
+        # Realiza os cálculos das contagens para a nova empresa
+        new_empresa.total_users = CustomUser.objects.filter(empresa_id=new_empresa.id).count()
+        new_empresa.total_books = Livro.objects.filter(empresa_id=new_empresa.id).count()
+        new_empresa.total_loans = Emprestimo.objects.filter(cliente__empresa_id=new_empresa.id, devolvido=False).count()
+        new_empresa.total_clients = Cliente.objects.filter(empresa_id=new_empresa.id).count()
+
+        # Salva as atualizações no banco de dados
+        new_empresa.save()
+
         messages.success(request, 'Empresa Criada com sucesso.', extra_tags='success')
-        return render(request, 'pages/add-empresa.html', {'empresas': empresas})
-    else:
-        empresas = Empresas.objects.annotate(
-            total_users=Count('customuser'),
-            total_books=Count('livro'),
-            total_loans=Count('emprestimo'),
-            total_clients=Count('cliente')
-        )
-        return render(request, 'pages/add-empresa.html', {'empresas': empresas})
+
+    # Atualiza os totais de todas as empresas existentes
+    empresas = Empresas.objects.all()
+    for empresa in empresas:
+        empresa.total_users = CustomUser.objects.filter(empresa_id=empresa.id).count()
+        empresa.total_books = Livro.objects.filter(empresa_id=empresa.id).count()
+        empresa.total_loans = Emprestimo.objects.filter(cliente__empresa_id=empresa.id, devolvido=False).count()
+        empresa.total_clients = Cliente.objects.filter(empresa_id=empresa.id).count()
+        empresa.save()
+    
+    return render(request, 'pages/add-empresa.html', {'empresas': empresas})
 
 @login_required(redirect_field_name='login')
 def desativar_empresa(request, id):

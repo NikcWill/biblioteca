@@ -27,5 +27,18 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = window.location.pathname;
     }
 });
+   const addClientButton = document.getElementById('add-client-button');
+        const deactivateClientButton = document.getElementById('deactivate-client-button');
+        const addClientForm = document.getElementById('add-client-form');
+        const deactivateClientForm = document.getElementById('deactivate-client-form');
 
+        addClientButton.addEventListener('click', function() {
+            addClientForm.style.display = 'block';
+            deactivateClientForm.style.display = 'none';
+        });
+
+        deactivateClientButton.addEventListener('click', function() {
+            deactivateClientForm.style.display = 'block';
+            addClientForm.style.display = 'none';
+        });
 
