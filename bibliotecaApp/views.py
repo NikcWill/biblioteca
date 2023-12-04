@@ -141,14 +141,18 @@ def add_genero(request):
             return redirect('add-genero')
 
     else:
-            if request.user.is_superuser:
-                genero = Genero.objects.filter(active=True)
-            elif request.user.cargo.name == 'Gerente':
-                genero = Genero.objects.filter(empresa_id=request.user.empresa.id, active=True)
+        if request.user.is_superuser:
+            if not request.user.empresa:
+                messages.error(request, 'Não existe empresa cadastrada! Para adicionar é necessário adicionar uma!.', extra_tags='warning')
+                return redirect('add-empresa')
             else:
-                genero= Genero.objects.filter(user_id=request.user.id, active=True)
-    
-            return render(request, 'pages/add-genero.html', {'generos': genero})
+                genero = Genero.objects.filter(active=True)
+        elif request.user.cargo.name == 'Gerente':
+            genero = Genero.objects.filter(empresa_id=request.user.empresa.id, active=True)
+        else:
+            genero = Genero.objects.filter(user_id=request.user.id, active=True)
+
+        return render(request, 'pages/add-genero.html', {'generos': genero})
 
 @login_required(redirect_field_name='login')
 def delete_genero(request, id):

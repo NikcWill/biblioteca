@@ -11,13 +11,23 @@ from django.db.models import Q
 from accounts.models import CustomUser
 from bibliotecaApp.models import Genero, Livro
 from cliente.models import Cliente, Emprestimo
-from django.db.models import Count
+
 
 
 @login_required(redirect_field_name='login')
 def empresa_detail(request, id):
-  empresa = Empresas.objects.get(id=id)
-  return render(request, 'pages/empresa_detail.html', {'empresa': empresa})
+    empresa = get_object_or_404(Empresas, id=id)
+    
+    if request.method == 'POST':
+        empresa.name = request.POST.get('name')
+        empresa.cnpj = request.POST.get('cnpj')
+        empresa.active = True if request.POST.get('active') == 'on' else False
+        empresa.save()
+
+        messages.success(request, 'Alterações salvas com sucesso!')
+        return redirect('add-empresa')
+
+    return render(request, 'pages/empresa_detail.html', {'empresa': empresa})
 
 @login_required(redirect_field_name='login')
 def add_empresa(request):
@@ -46,19 +56,20 @@ def add_empresa(request):
             created_at=created_at
         )
 
-        # Realiza os cálculos das contagens para a nova empresa
+        if not request.user.empresa:
+            request.user.empresa = new_empresa
+            request.user.save()
+
         new_empresa.total_users = CustomUser.objects.filter(empresa_id=new_empresa.id).count()
         new_empresa.total_books = Livro.objects.filter(empresa_id=new_empresa.id).count()
         new_empresa.total_loans = Emprestimo.objects.filter(cliente__empresa_id=new_empresa.id, devolvido=False).count()
         new_empresa.total_clients = Cliente.objects.filter(empresa_id=new_empresa.id).count()
-
-        # Salva as atualizações no banco de dados
         new_empresa.save()
 
         messages.success(request, 'Empresa Criada com sucesso.', extra_tags='success')
 
-    # Atualiza os totais de todas as empresas existentes
     empresas = Empresas.objects.all()
+    
     for empresa in empresas:
         empresa.total_users = CustomUser.objects.filter(empresa_id=empresa.id).count()
         empresa.total_books = Livro.objects.filter(empresa_id=empresa.id).count()

@@ -12,9 +12,6 @@ from django.http import HttpResponseRedirect
 from django.db.models import Q
 from django.contrib import messages
 
-
-
-
 def get_clientes_based_on_permission(user):
     if user.is_superuser:
         return Cliente.objects.all()
@@ -71,15 +68,13 @@ def cliente_detail(request, id):
 
             data_prev_devolucao = emprestimo.data_prev_devolucao  
     else:
-        # Se não houver empréstimos, define a lista de livros emprestados como vazia
-        livros_emprestados = []
-        # Pode definir um valor padrão para data_prev_devolucao, se necessário
+         livros_emprestados = []
+     
 
     return render(request, 'pages/cliente_detail.html', {
         'cliente': cliente,
         'livros_emprestados': livros_emprestados,
         'data_prev_devolucao': data_prev_devolucao,
-        # outros contextos...
     })
 
 @login_required(redirect_field_name='login')
@@ -90,7 +85,7 @@ def historico_cliente(request, id):
     livros_emprestados = []
     data_devolucao = None
     data_prev_devolucao = None
-    saldo_de_dias_devolvidos = None  # Adicione essa linha
+    saldo_de_dias_devolvidos = None 
 
     if emprestimos:
         for emprestimo in emprestimos:
@@ -110,7 +105,7 @@ def historico_cliente(request, id):
         'livros_emprestados': livros_emprestados,
         'data_devolucao': data_devolucao,
         'data_prev_devolucao': data_prev_devolucao,
-        'saldo_de_dias_devolvidos': saldo_de_dias_devolvidos  # Adicione essa variável ao contexto
+        'saldo_de_dias_devolvidos': saldo_de_dias_devolvidos  
     })
 
 @login_required(redirect_field_name='login')
@@ -297,15 +292,12 @@ def deletar_emprestimo(request, emprestimo_id):
     cliente = emprestimo.cliente
     livro = emprestimo.livro
     
-    # Atualizar a quantidade de livros emprestados pelo cliente
     cliente.qtd_livros += 1
     cliente.save()
 
-    # Atualizar a quantidade emprestada do livro correspondente
     livro.emprestado += 1
     livro.save()
 
-    # Deletar o empréstimo
     emprestimo.delete()
     
     messages.success(

@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    
+    <title>Document</title>
+</head>
+<body>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %} alert-{{ message.tags }} {% endif %} mt-2">
+                <h3>{{ message }}</h3>
+            </div>
+        {% endfor %}
+        <script>
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    alert.style.display = 'none';
+                });
+            }, 3000); 
+        </script>
+    {% endif %}
+    <form method="POST" class="container mt-5" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="name">Codigo:</label>
+        <input type="text" id="cod" name="cod" value="{{ user.id }}" readonly>
+        
+        <label for="name">Usuário:</label>
+        <input type="text" id="username" name="username" value="{{ user.username }}"><br>
+
+        <label for="name">Nome:</label>
+        <input type="text" id="first_name " name="first_name " value="{{ user.first_name }}"><br>
+        
+        <label for="name">Email:</label>
+        <input type="text" id="email " name="email " value="{{ user.email }}"><br>
+        
+        <select name="empresa" id="">
+            <option value="">Selecione uma Empresa</option>
+            {% for empresa in empresas %}
+                <option value="{{ empresa.id }}" {% if user.empresa_id == empresa.id %} selected {% endif %}>{{ empresa.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <select name="cargo" id="">
+            <option value="">Selecione um Cargo</option>
+            {% for cargo in cargos %}
+                <option value="{{ cargo.id }}" {% if user.cargo_id == cargo.id %} selected {% endif %}>{{ cargo.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <label for="active">Ativo:</label>
+        <input type="checkbox" id="active" name="active" {% if user.is_active %} checked {% endif %}><br>
+
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+    </form>
+    
+    <a href="{% url 'home'  %}" class="btn btn-secondary">Voltar à home</a>
+    <a href="{% url 'add-user'  %}" class="btn btn-secondary">Voltar</a>
+</body>
+</html>

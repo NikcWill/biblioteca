@@ -14,7 +14,6 @@
 <body>
     <h1>Emprestar livro para o cliente</h1>
 
-    <!-- Formulário para selecionar um cliente -->
     <form id="cliente-form" action="{% url 'selecionar-cliente' %}" method="GET" class="d-flex gap-1">
         <select name="q">
             <option value="" selected disabled>Selecione um cliente</option>
@@ -54,7 +53,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Exibir livros devolvidos -->
+                
                 {% for livro in livros_devolvidos %}
                     <tr>
                         <td scope="row">
@@ -70,7 +69,7 @@
                     </tr>
                 {% endfor %}
 
-                <!-- Exibir livros disponíveis para empréstimo -->
+                
                 {% for livro in livros_nao_emprestados %}
                     <tr>
                         <td scope="row">
@@ -88,13 +87,12 @@
             </tbody>
         </table>
         
-        <!-- Campo para data de devolução -->
+       
         <input id="data-devolucao" type="date" name="data_prev_devolucao" placeholder="Data para devolução">
         
         <button id="salvar-btn" type="submit" disabled>Salvar</button>
     </form>
 
-    <!-- Link para a home -->
     <a href="{% url 'home' %}" class="btn btn-primary mt-5 mb-1">Home</a>
 </body>
 </html>

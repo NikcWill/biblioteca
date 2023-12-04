@@ -13,11 +13,17 @@
 <body>
     <form method="POST" class="container mt-5" enctype="multipart/form-data">
         {% csrf_token %}
+        <label for="cod">Cod da empresa:</label>
+        <input type="text" id="cod" name="cod" value="{{ empresa.id }}" readonly><br>
+        
         <label for="name">Nome da empresa:</label>
         <input type="text" id="name" name="name" value="{{ empresa.name }}"><br>
         
         <label for="cnpj">CNPJ:</label>
         <input type="text" id="cnpj" name="cnpj" value="{{ empresa.cnpj }}"><br>
+    
+        <label for="created_at">Data criação:</label>
+        <input type="text" id="created_at" name="created_at" value="{{ empresa.created_at }}" readonly><br>
         
         <label for="active">Ativa:</label>
         <input type="checkbox" id="active" name="active" {% if empresa.active %} checked {% endif %}><br>
