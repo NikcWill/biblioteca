@@ -270,4 +270,3 @@ def data_calculate(data_1, data_2):
 
     return diferenca.days
 
-    
